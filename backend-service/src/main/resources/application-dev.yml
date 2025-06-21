@@ -1,0 +1,29 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  devtools:
+    add-properties: true
+  datasource:
+    url: "jdbc:mysql://localhost:3307/backend-service"
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+# application-dev.yml
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+openapi:
+  service:
+    api-docs: backend-service
+    server: http://localhost:${server.port}
+    title: Backend service
+    version: 1.0.0
+jwt:
+  secretkey: dev@123
+

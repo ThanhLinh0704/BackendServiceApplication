@@ -1,0 +1,103 @@
+package linhlt.project.backend_service.service.implement;
+
+import linhlt.project.backend_service.common.UserStatus;
+import linhlt.project.backend_service.dto.request.UserRequest;
+import linhlt.project.backend_service.dto.request.UserUpdateRequest;
+import linhlt.project.backend_service.dto.response.UserResponse;
+import linhlt.project.backend_service.exception.AppException;
+import linhlt.project.backend_service.exception.ErrorCode;
+import linhlt.project.backend_service.mapper.UserMapper;
+import linhlt.project.backend_service.model.AddressEntity;
+import linhlt.project.backend_service.model.UserEntity;
+import linhlt.project.backend_service.repository.AddressRepository;
+import linhlt.project.backend_service.repository.UserRepository;
+import linhlt.project.backend_service.service.UserService;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j(topic = "USER-SERVICE")
+public class UserServiceImpl implements UserService {
+    
+    UserRepository userRepository;
+    UserMapper userMapper;
+    AddressRepository addressRepository;
+    PasswordEncoder passwordEncoder;
+
+    @Transactional(rollbackFor = Exception.class)
+    public UserResponse createUser(UserRequest userRequest) {
+        log.info("Saving user: {}", userRequest);
+
+        if (userRepository. existsByUsername(userRequest.getUsername())){
+            throw new AppException(ErrorCode.USER_EXISTED);
+        }
+        UserEntity userEntity = userMapper.toUserEntity(userRequest);
+        userEntity.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+        userEntity.setStatus(UserStatus.NONE);
+        userRepository.save(userEntity);
+        if (userEntity.getId() != null) {
+            log.info("user id: {}", userEntity.getId());
+            List<AddressEntity> addresses = new ArrayList<>();
+            userRequest.getAddressRequests().forEach(address -> {
+                AddressEntity addressEntity = new AddressEntity();
+                userMapper.toAddressEntity(addressEntity, address);
+                addressEntity.setUserId(userEntity.getId());
+                addresses.add(addressEntity);
+            });
+            addressRepository.saveAll(addresses);
+            log.info("Saved addresses: {}", addresses);
+        }
+        return userMapper.toUserResponse(userEntity);
+    }
+
+    public List<UserResponse> getAllUsers() {
+        List<UserResponse> listUserResponse =  userRepository.findAll()
+                .stream().map(userEntity -> userMapper.toUserResponse(userEntity)).toList();
+        log.info("Found {} users", listUserResponse.size());
+        return listUserResponse;
+    }
+
+    public UserResponse getUserById(String userId) {
+        return userMapper.toUserResponse(
+                userRepository.findById(userId).orElseThrow(
+                        ()->new RuntimeException("User not found")));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public UserResponse updateUser(String userId, UserUpdateRequest userUpdateRequest) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(
+                ()->new RuntimeException("User not found"));
+        userMapper.updateUserEntity(userEntity, userUpdateRequest);
+
+        List<AddressEntity> addresses = new ArrayList<>();
+        userUpdateRequest.getAddressRequests().forEach(address -> {
+            AddressEntity addressEntity = addressRepository.findByUserIdAndAddressType(userId, address.getAddressType());
+            if (addressEntity == null) {
+                addressEntity = new AddressEntity();
+            }
+            userMapper.toAddressEntity(addressEntity, address);
+            addresses.add(addressEntity);
+        });
+        addressRepository.saveAll(addresses);
+        log.info("Updated addresses: {}", addresses);
+        return userMapper.toUserResponse(userRepository.save(userEntity));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteUser(String userId) {
+        UserEntity userEntity = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        userEntity.setStatus(UserStatus.INACTIVE);
+        userRepository.save(userEntity);
+        log.info("Deleted user: {}", userEntity);
+    }
+}

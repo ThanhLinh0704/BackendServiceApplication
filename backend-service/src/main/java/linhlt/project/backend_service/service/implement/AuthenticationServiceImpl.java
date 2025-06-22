@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     PasswordEncoder passwordEncoder;
 
     @NonFinal
-    private static final String SIGNER_KEY = "W77hqLWGSWhmCmLXVR3UdhOTnPKeZr+D6huzU08+ieB2xPRx2LBU8KlAkIaunlqc";
+    @Value("${jwt.secretkey}")
+    protected String SIGNER_KEY;
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {

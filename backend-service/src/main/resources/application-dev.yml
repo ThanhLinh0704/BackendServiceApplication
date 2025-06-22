@@ -25,5 +25,5 @@ openapi:
     title: Backend service
     version: 1.0.0
 jwt:
-  secretkey: dev@123
+  secretkey: "W77hqLWGSWhmCmLXVR3UdhOTnPKeZr+D6huzU08+ieB2xPRx2LBU8KlAkIaunlqc"
 

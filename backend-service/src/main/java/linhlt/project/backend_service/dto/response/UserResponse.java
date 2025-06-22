@@ -12,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -29,4 +30,5 @@ public class UserResponse implements Serializable {
      String phoneNumber;
      UserType userType;
      List<AddressRequest> addressRequests;
+     Set<String> roles;
 }

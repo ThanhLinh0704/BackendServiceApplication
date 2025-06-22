@@ -1,5 +1,7 @@
 package linhlt.project.backend_service.mapper;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
 import javax.annotation.processing.Generated;
 import linhlt.project.backend_service.dto.request.AddressRequest;
 import linhlt.project.backend_service.dto.request.UserRequest;
@@ -11,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-06-22T11:39:47+0900",
+    date = "2025-06-22T13:43:20+0900",
     comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.3 (Oracle Corporation)"
 )
 @Component
@@ -73,6 +75,10 @@ public class UserMapperImpl implements UserMapper {
         userResponse.setBirthDate( userEntity.getBirthDate() );
         userResponse.setPhoneNumber( userEntity.getPhoneNumber() );
         userResponse.setUserType( userEntity.getUserType() );
+        Set<String> set = userEntity.getRoles();
+        if ( set != null ) {
+            userResponse.setRoles( new LinkedHashSet<String>( set ) );
+        }
 
         return userResponse;
     }

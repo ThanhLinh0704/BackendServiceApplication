@@ -11,6 +11,7 @@ import linhlt.project.backend_service.dto.response.AuthenticationResponse;
 import linhlt.project.backend_service.dto.response.IntrospectResponse;
 import linhlt.project.backend_service.exception.AppException;
 import linhlt.project.backend_service.exception.ErrorCode;
+import linhlt.project.backend_service.model.UserEntity;
 import linhlt.project.backend_service.repository.UserRepository;
 import linhlt.project.backend_service.service.AuthenticationService;
 import lombok.AccessLevel;
@@ -26,6 +27,7 @@ import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.StringJoiner;
 
 @Service
 @RequiredArgsConstructor
@@ -48,7 +50,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new AppException(ErrorCode.UNAUTHENTICATION);
         }
         return AuthenticationResponse.builder()
-                .token(genarationToken(authenticationRequest.getUsername()))
+                .token(genarationToken(user))
                 .authenticated(true)
                 .build();
     }
@@ -66,16 +68,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
     }
 
-    private String genarationToken(String username) {
+    private String genarationToken(UserEntity userEntity) {
         JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(username)
+                .subject(userEntity.getUsername())
                 .issuer("linhlt.fpt")
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
-                .claim("CustomClaim", "CustomClaimValue")
+                .claim("scope", buildScope(userEntity))
                 .build();
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
         JWSObject jwsObject = new JWSObject(jwsHeader, payload);
@@ -86,5 +88,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             log.error("Cannot sign JWT object", e);
             throw new RuntimeException(e);
         }
+    }
+
+    private String buildScope(UserEntity userEntity) {
+        StringJoiner scopeJoiner = new StringJoiner(" ");
+        if (userEntity.getRoles() != null) {
+            userEntity.getRoles().forEach(scopeJoiner::add);
+        }
+        return scopeJoiner.toString();
     }
 }

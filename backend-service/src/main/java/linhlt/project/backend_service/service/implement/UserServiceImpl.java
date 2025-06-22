@@ -1,5 +1,6 @@
 package linhlt.project.backend_service.service.implement;
 
+import linhlt.project.backend_service.common.Role;
 import linhlt.project.backend_service.common.UserStatus;
 import linhlt.project.backend_service.dto.request.UserRequest;
 import linhlt.project.backend_service.dto.request.UserUpdateRequest;
@@ -16,11 +17,15 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -43,6 +48,11 @@ public class UserServiceImpl implements UserService {
         }
         UserEntity userEntity = userMapper.toUserEntity(userRequest);
         userEntity.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+        userEntity.setRoles(roles);
+
         userEntity.setStatus(UserStatus.NONE);
         userRepository.save(userEntity);
         if (userEntity.getId() != null) {
@@ -60,17 +70,29 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponse(userEntity);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAllUsers() {
+        log.info("Getting all users");
         List<UserResponse> listUserResponse =  userRepository.findAll()
                 .stream().map(userEntity -> userMapper.toUserResponse(userEntity)).toList();
         log.info("Found {} users", listUserResponse.size());
         return listUserResponse;
     }
 
+
+    @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUserById(String userId) {
+        log.info("Getting user by id: {}", userId);
         return userMapper.toUserResponse(
                 userRepository.findById(userId).orElseThrow(
                         ()->new RuntimeException("User not found")));
+    }
+
+    public UserResponse getMyInformation() {
+        var context = SecurityContextHolder.getContext().getAuthentication();
+        String userName = context.getName();
+        UserEntity myInformation = userRepository.findByUsername(userName);
+        return userMapper.toUserResponse(myInformation);
     }
 
     @Transactional(rollbackFor = Exception.class)

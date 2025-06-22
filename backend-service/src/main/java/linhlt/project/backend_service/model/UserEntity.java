@@ -7,12 +7,10 @@ import linhlt.project.backend_service.common.UserType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.JdbcType;
-import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.type.SqlTypes;
 
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Data
@@ -56,6 +54,8 @@ public class UserEntity {
      @Temporal(TemporalType.TIMESTAMP)
      @UpdateTimestamp
      Date updateDate;
+
+     Set<String> roles;
 
 }
 

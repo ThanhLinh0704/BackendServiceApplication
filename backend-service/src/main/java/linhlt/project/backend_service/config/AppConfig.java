@@ -56,7 +56,7 @@ public class AppConfig {
     @Bean
     JwtAuthenticationConverter jwtConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
         converter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return converter;
@@ -93,7 +93,7 @@ public class AppConfig {
             UserEntity userEntity = UserEntity.builder()
                     .username("admin")
                     .password(passwordEncoder().encode("admin"))
-                    .roles(roles)
+//                    .roles(roles)
                     .build();
             userRepository.save(userEntity);
             log.warn("User admin created");

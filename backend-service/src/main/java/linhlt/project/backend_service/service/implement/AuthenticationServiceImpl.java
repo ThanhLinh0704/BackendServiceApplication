@@ -93,7 +93,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private String buildScope(UserEntity userEntity) {
         StringJoiner scopeJoiner = new StringJoiner(" ");
         if (userEntity.getRoles() != null) {
-            userEntity.getRoles().forEach(scopeJoiner::add);
+            userEntity.getRoles().forEach(role -> {scopeJoiner.add("ROLE_" + role.getName());
+            role.getPermissions().forEach(permission -> {scopeJoiner.add(permission.getName());});
+            });
+
         }
         return scopeJoiner.toString();
     }

@@ -55,7 +55,8 @@ public class UserEntity {
      @UpdateTimestamp
      Date updateDate;
 
-     Set<String> roles;
+     @ManyToMany
+     Set<Role> roles;
 
 }
 

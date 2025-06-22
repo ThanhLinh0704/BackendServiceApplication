@@ -11,6 +11,7 @@ import linhlt.project.backend_service.mapper.UserMapper;
 import linhlt.project.backend_service.model.AddressEntity;
 import linhlt.project.backend_service.model.UserEntity;
 import linhlt.project.backend_service.repository.AddressRepository;
+import linhlt.project.backend_service.repository.RoleRepository;
 import linhlt.project.backend_service.repository.UserRepository;
 import linhlt.project.backend_service.service.UserService;
 import lombok.AccessLevel;
@@ -38,6 +39,7 @@ public class UserServiceImpl implements UserService {
     UserMapper userMapper;
     AddressRepository addressRepository;
     PasswordEncoder passwordEncoder;
+    RoleRepository roleRepository;
 
     @Transactional(rollbackFor = Exception.class)
     public UserResponse createUser(UserRequest userRequest) {
@@ -51,7 +53,7 @@ public class UserServiceImpl implements UserService {
 
         HashSet<String> roles = new HashSet<>();
         roles.add(Role.USER.name());
-        userEntity.setRoles(roles);
+//        userEntity.setRoles(roles);
 
         userEntity.setStatus(UserStatus.NONE);
         userRepository.save(userEntity);
@@ -100,6 +102,10 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow(
                 ()->new RuntimeException("User not found"));
         userMapper.updateUserEntity(userEntity, userUpdateRequest);
+
+        userEntity.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
+        var listRoles = roleRepository.findAllById(userUpdateRequest.getRoles());
+        userEntity.setRoles(new HashSet<>(listRoles));
 
         List<AddressEntity> addresses = new ArrayList<>();
         userUpdateRequest.getAddressRequests().forEach(address -> {

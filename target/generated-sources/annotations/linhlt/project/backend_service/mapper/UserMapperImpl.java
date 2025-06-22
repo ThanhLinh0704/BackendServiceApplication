@@ -8,12 +8,13 @@ import linhlt.project.backend_service.dto.request.UserRequest;
 import linhlt.project.backend_service.dto.request.UserUpdateRequest;
 import linhlt.project.backend_service.dto.response.UserResponse;
 import linhlt.project.backend_service.model.AddressEntity;
+import linhlt.project.backend_service.model.Role;
 import linhlt.project.backend_service.model.UserEntity;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-06-22T13:43:20+0900",
+    date = "2025-06-22T23:39:54+0900",
     comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.3 (Oracle Corporation)"
 )
 @Component
@@ -75,9 +76,9 @@ public class UserMapperImpl implements UserMapper {
         userResponse.setBirthDate( userEntity.getBirthDate() );
         userResponse.setPhoneNumber( userEntity.getPhoneNumber() );
         userResponse.setUserType( userEntity.getUserType() );
-        Set<String> set = userEntity.getRoles();
+        Set<Role> set = userEntity.getRoles();
         if ( set != null ) {
-            userResponse.setRoles( new LinkedHashSet<String>( set ) );
+            userResponse.setRoles( new LinkedHashSet<Role>( set ) );
         }
 
         return userResponse;

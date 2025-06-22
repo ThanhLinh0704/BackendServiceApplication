@@ -7,12 +7,15 @@ import linhlt.project.backend_service.dto.response.UserResponse;
 import linhlt.project.backend_service.model.AddressEntity;
 import linhlt.project.backend_service.model.UserEntity;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     UserEntity toUserEntity(UserRequest userRequest);
+    @Mapping(target = "roles", ignore = true)
     void updateUserEntity(@MappingTarget UserEntity userEntity, UserUpdateRequest userUpdateRequest);
+
     UserResponse toUserResponse(UserEntity userEntity);
     void toAddressEntity(@MappingTarget AddressEntity addressEntity, AddressRequest addressRequest);
 }

@@ -3,6 +3,7 @@ package linhlt.project.backend_service.dto.response;
 import linhlt.project.backend_service.common.Gender;
 import linhlt.project.backend_service.common.UserType;
 import linhlt.project.backend_service.dto.request.AddressRequest;
+import linhlt.project.backend_service.model.Role;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,5 +31,5 @@ public class UserResponse implements Serializable {
      String phoneNumber;
      UserType userType;
      List<AddressRequest> addressRequests;
-     Set<String> roles;
+     Set<Role> roles;
 }

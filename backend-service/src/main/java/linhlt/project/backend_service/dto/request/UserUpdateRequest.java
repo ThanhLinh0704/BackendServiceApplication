@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -23,4 +24,5 @@ public class UserUpdateRequest {
      String phoneNumber;
      UserType userType;
      List<AddressRequest> addressRequests;
+     Set<String> roles;
 }

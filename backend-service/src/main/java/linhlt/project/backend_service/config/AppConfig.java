@@ -1,10 +1,13 @@
 package linhlt.project.backend_service.config;
 
 import linhlt.project.backend_service.common.Role;
+import linhlt.project.backend_service.dto.request.IntrospectRequest;
 import linhlt.project.backend_service.model.UserEntity;
 import linhlt.project.backend_service.repository.UserRepository;
+import linhlt.project.backend_service.service.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +36,10 @@ import java.util.HashSet;
 @Slf4j
 public class AppConfig {
 
-    private final String[] PUBLIC_ENDPOINT = {"/users", "/auth/token", "auth/introspect"};
+    @Autowired
+    private CustomJwtDecoder jwtDecoder;
+
+    private final String[] PUBLIC_ENDPOINT = {"/users", "/auth/token", "/auth/introspect", "/auth/logout"};
 
     @Value("${jwt.secretkey}")
     protected String secretKey;
@@ -47,7 +53,7 @@ public class AppConfig {
                         .anyRequest().authenticated());
 //                .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS));
         httpSecurity.oauth2ResourceServer(oauth2 ->
-                oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
+                oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder)
                         .jwtAuthenticationConverter(jwtConverter())
                 ));
         return httpSecurity.build();
@@ -74,14 +80,14 @@ public class AppConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public JwtDecoder jwtDecoder() {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(), "HS512");
-        return NimbusJwtDecoder
-                .withSecretKey(secretKeySpec)
-                .macAlgorithm(MacAlgorithm.HS512)
-                .build();
-    }
+//    @Bean
+//    public JwtDecoder jwtDecoder() {
+//        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(), "HS512");
+//        return NimbusJwtDecoder
+//                .withSecretKey(secretKeySpec)
+//                .macAlgorithm(MacAlgorithm.HS512)
+//                .build();
+//    }
 
     @Bean
     ApplicationRunner applicationRunner(UserRepository userRepository) {

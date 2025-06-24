@@ -4,10 +4,7 @@ import linhlt.project.backend_service.common.Gender;
 import linhlt.project.backend_service.common.UserType;
 import linhlt.project.backend_service.dto.request.AddressRequest;
 import linhlt.project.backend_service.model.Role;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.io.Serializable;
@@ -19,6 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
 public class UserResponse implements Serializable {
      String id;
      String username;

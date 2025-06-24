@@ -4,6 +4,8 @@ import linhlt.project.backend_service.dto.request.UserRequest;
 import linhlt.project.backend_service.dto.request.UserUpdateRequest;
 import linhlt.project.backend_service.dto.response.UserResponse;
 
+import java.util.List;
+
 public interface UserService {
 
     UserResponse createUser(UserRequest userRequest);
@@ -13,4 +15,7 @@ public interface UserService {
     UserResponse updateUser(String userId, UserUpdateRequest userUpdateRequest);
 
     void deleteUser(String userId);
+
+    UserResponse getMyInformation();
+    List<UserResponse> getAllUsers();
 }

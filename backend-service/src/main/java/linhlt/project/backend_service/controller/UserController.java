@@ -6,6 +6,7 @@ import linhlt.project.backend_service.dto.request.UserRequest;
 import linhlt.project.backend_service.dto.request.UserUpdateRequest;
 import linhlt.project.backend_service.dto.response.ApiResponse;
 import linhlt.project.backend_service.dto.response.UserResponse;
+import linhlt.project.backend_service.service.UserService;
 import linhlt.project.backend_service.service.implement.UserServiceImpl;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +26,11 @@ import java.util.List;
 public class UserController {
 
     private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    UserServiceImpl userService;
+    UserService userService;
 
     @PostMapping
     public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserRequest userRequest) {
+        log.info("UserController");
         ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.createUser(userRequest));
         return apiResponse;

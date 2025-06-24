@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-06-23T23:08:47+0900",
+    date = "2025-06-24T09:54:03+0900",
     comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.3 (Oracle Corporation)"
 )
 @Component
@@ -64,24 +64,24 @@ public class UserMapperImpl implements UserMapper {
             return null;
         }
 
-        UserResponse userResponse = new UserResponse();
+        UserResponse.UserResponseBuilder userResponse = UserResponse.builder();
 
-        userResponse.setId( userEntity.getId() );
-        userResponse.setUsername( userEntity.getUsername() );
-        userResponse.setPassword( userEntity.getPassword() );
-        userResponse.setFirstName( userEntity.getFirstName() );
-        userResponse.setLastName( userEntity.getLastName() );
-        userResponse.setEmail( userEntity.getEmail() );
-        userResponse.setGender( userEntity.getGender() );
-        userResponse.setBirthDate( userEntity.getBirthDate() );
-        userResponse.setPhoneNumber( userEntity.getPhoneNumber() );
-        userResponse.setUserType( userEntity.getUserType() );
+        userResponse.id( userEntity.getId() );
+        userResponse.username( userEntity.getUsername() );
+        userResponse.password( userEntity.getPassword() );
+        userResponse.firstName( userEntity.getFirstName() );
+        userResponse.lastName( userEntity.getLastName() );
+        userResponse.email( userEntity.getEmail() );
+        userResponse.gender( userEntity.getGender() );
+        userResponse.birthDate( userEntity.getBirthDate() );
+        userResponse.phoneNumber( userEntity.getPhoneNumber() );
+        userResponse.userType( userEntity.getUserType() );
         Set<Role> set = userEntity.getRoles();
         if ( set != null ) {
-            userResponse.setRoles( new LinkedHashSet<Role>( set ) );
+            userResponse.roles( new LinkedHashSet<Role>( set ) );
         }
 
-        return userResponse;
+        return userResponse.build();
     }
 
     @Override

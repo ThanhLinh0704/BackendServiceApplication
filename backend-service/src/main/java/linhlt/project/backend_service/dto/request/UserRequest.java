@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
 public class UserRequest {
      String username;
      @Size(min = 5, message = "PASSWORD_INVALID")

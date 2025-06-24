@@ -43,6 +43,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(rollbackFor = Exception.class)
     public UserResponse createUser(UserRequest userRequest) {
+        log.info("UserService createUser");
         log.info("Saving user: {}", userRequest);
 
         if (userRepository. existsByUsername(userRequest.getUsername())){
